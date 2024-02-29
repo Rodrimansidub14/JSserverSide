@@ -1,0 +1,11 @@
+CREATE TABLE IF NOT EXISTS erblog (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    team_a VARCHAR(255) NOT NULL,
+    team_b VARCHAR(255) NOT NULL,
+    score_a INT NOT NULL,
+    score_b INT NOT NULL,
+    image VARCHAR(255) 
+);
