@@ -1,20 +1,17 @@
-const swaggerJSDoc = require('swagger-jsdoc')
-const swaggerUi = require('swagger-ui-express')
+import swaggerJsdoc from 'swagger-jsdoc'
 
 const options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Elden Ring Blog',
+      title: 'Blog API',
       version: '1.0.0',
-      description: 'Swagger Doc for app',
+      description: 'API documentation for the Blog application',
     },
   },
-  apis: ['./src/routes/main.js'],
+  apis: ['./src/routes/*.js'], // Path to the API routes files
 }
 
-const specs = swaggerJSDoc(options)
+const specs = swaggerJsdoc(options)
 
-module.exports = (app) => {
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs))
-}
+export default specs

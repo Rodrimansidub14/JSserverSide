@@ -27,6 +27,7 @@
     "swagger-ui-express": "^5.0.0"
   },
   "devDependencies": {
+    "@babel/eslint-parser": "^7.23.10",
     "eslint": "^8.57.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-import": "^2.25.3",

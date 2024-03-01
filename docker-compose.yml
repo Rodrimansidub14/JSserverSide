@@ -18,6 +18,7 @@ services:
       - db_data:/var/lib/mysql
     environment:
       MYSQL_DATABASE: erblog
+      MYSQL_ROOT_PASSWORD: 12345
       MYSQL_USER: user
       MYSQL_PASSWORD: 12345
     ports:

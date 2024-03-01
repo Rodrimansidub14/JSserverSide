@@ -5,7 +5,7 @@
       "no-console": "off",
       "linebreak-style": ["error", "unix"],
       "import/extensions": ["error", "ignorePackages", {
-        "js": "never",
+        "js": "always",
         "mjs": "never",
         "jsx": "never"
       }]

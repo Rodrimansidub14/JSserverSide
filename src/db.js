@@ -1,9 +1,9 @@
 // Import the connection object from conn.js
-import pool from './conn'
+import pool from './conn.js'
 
 export async function getAllPosts() {
   try {
-    const [rows] = await pool.query('SELECT * FROM blog_posts')
+    const [rows] = await pool.query('SELECT * FROM erblog')
     return rows
   } catch (error) {
     console.error('Error getting all posts:', error)
@@ -23,7 +23,7 @@ export async function createPost(title, content, imageBase64) {
 
 export async function getPById(postId) {
   try {
-    const [rows] = await pool.query('SELECT * FROM blog_posts WHERE id = ?', [postId])
+    const [rows] = await pool.query('SELECT * FROM erblog WHERE id = ?', [postId])
     return rows[0] || null
   } catch (error) {
     console.error('Error getting post por id:', error)
@@ -31,11 +31,11 @@ export async function getPById(postId) {
   }
 }
 
-export async function updatePById(postId, title, content) {
+export async function updatePById(postId, title, content, imageBase64) {
   try {
     const result = await pool.query(
-      'UPDATE blog_posts SET title = ?, content = ? WHERE id = ?',
-      [title, content, postId],
+      'UPDATE erblog SET title = ?, content = ? WHERE id = ?',
+      [title, content, postId, imageBase64],
     )
     return result
   } catch (error) {
@@ -46,7 +46,7 @@ export async function updatePById(postId, title, content) {
 
 export async function deletePById(postId) {
   try {
-    const result = await pool.query('DELETE FROM blog_posts WHERE id = ?', [postId])
+    const result = await pool.query('DELETE FROM erblog WHERE id = ?', [postId])
     return result
   } catch (error) {
     console.error('Error eliinando post:', error)
