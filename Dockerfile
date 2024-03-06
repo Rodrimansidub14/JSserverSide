@@ -1,4 +1,4 @@
-FROM node:16
+FROM node:20
 
 WORKDIR /usr/src/app
 
@@ -8,6 +8,6 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 3000
+EXPOSE 5000
 
 CMD ["node", "src/main.js"]

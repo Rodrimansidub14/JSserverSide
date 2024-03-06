@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: mysql://user:12345@db:3306/erblog
+
+  db:
+    image: mysql:5.7
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: erblog
+      MYSQL_ROOT_PASSWORD: 12345
+      MYSQL_USER: user
+      MYSQL_PASSWORD: 12345
+    ports:
+      - "3306:3306"
+
+volumes:
+  db_data:

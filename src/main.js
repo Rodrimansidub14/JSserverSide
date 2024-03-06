@@ -1,7 +1,5 @@
 import express from 'express'
 import cors from 'cors'
-import swaggerUi from 'swagger-ui-express'
-import specs from './swagger.js'
 import {
   getAllPosts, createPost, getPById, updatePById, deletePById,
 } from './db.js'
@@ -10,31 +8,12 @@ const app = express()
 
 app.use(cors())
 app.use(express.json())
+app.use(express.json({ limit: '10mb' })) // Set limit as appropriate
 
-/**
- * @swagger
- * /:
- *   get:
- *     summary: Welcome message
- *     description: Returns a welcome message to the blog server.
- *     responses:
- *       200:
- *         description: A welcome message.
- */
 app.get('/', (_req, res) => {
   res.send('Bienvenido al servidor del blog')
 })
 
-/**
- * @swagger
- * /posts:
- *   get:
- *     summary: Retrieve all posts
- *     description: Retrieves a list of all blog posts.
- *     responses:
- *       200:
- *         description: A list of blog posts.
- */
 app.get('/posts', async (_req, res) => {
   try {
     const posts = await getAllPosts()
@@ -44,25 +23,6 @@ app.get('/posts', async (_req, res) => {
   }
 })
 
-/**
- * @swagger
- * /posts/{postId}:
- *   get:
- *     summary: Retrieve a post by ID
- *     description: Retrieves the details of a blog post by its ID.
- *     parameters:
- *       - in: path
- *         name: postId
- *         required: true
- *         description: ID of the post to retrieve.
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: The requested blog post.
- *       404:
- *         description: Post not found.
- */
 app.get('/posts/:postId', async (req, res) => {
   try {
     const { postId } = req.params
@@ -70,6 +30,7 @@ app.get('/posts/:postId', async (req, res) => {
     if (post) {
       res.status(200).json(post)
     } else {
+      console.log(req.method, req.headers, req.body)
       res.status(404).send('No se encontró ningún post')
     }
   } catch (error) {
@@ -77,35 +38,10 @@ app.get('/posts/:postId', async (req, res) => {
   }
 })
 
-/**
- * @swagger
- * /posts:
- *   post:
- *     summary: Create a new post
- *     description: Creates a new blog post with the provided title, content, and optional image.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *               content:
- *                 type: string
- *               imageBase64:
- *                 type: string
- *     responses:
- *       201:
- *         description: The newly created blog post.
- *       400:
- *         description: Invalid request body.
- *       500:
- *         description: Internal server error.
- */
 // eslint-disable-next-line consistent-return
 app.post('/posts', async (req, res) => {
+  console.log(req.method, req.headers, req.body)
+  // Log the body to see what is being received
   const { title, content, imageBase64 } = req.body
   if (!title || !content) {
     return res.status(400).json({ error: 'Titulo y contenido son requeridos.' })
@@ -119,47 +55,15 @@ app.post('/posts', async (req, res) => {
   }
 })
 
-/**
- * @swagger
- * /posts/{postId}:
- *   put:
- *     summary: Update a post
- *     description: Updates an existing blog post
- *     parameters:
- *       - in: path
- *         name: postId
- *         required: true
- *         description: ID of the post to update.
- *         schema:
- *           type: integer
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *               content:
- *                 type: string
- *               imageBase64:
- *                 type: string
- *     responses:
- *       200:
- *         description: Post updated successfully.
- *       404:
- *         description: Post not found.
- *       500:
- *         description: Internal server error.
- */
 app.put('/posts/:postId', async (req, res) => {
   const { title, content, imageBase64 } = req.body
   try {
     const result = await updatePById(req.params.postId, title, content, imageBase64)
     if (result.affectedRows > 0) {
+      console.log(req.method, req.headers, req.body)
       res.status(200).send('Post updated successfully')
     } else {
+      console.log(req.method, req.headers, req.body)
       res.status(404).send('Post not found')
     }
   } catch (error) {
@@ -167,27 +71,6 @@ app.put('/posts/:postId', async (req, res) => {
   }
 })
 
-/**
- * @swagger
- * /posts/{postId}:
- *   delete:
- *     summary: Delete a post
- *     description: Deletes an existing blog post by its ID.
- *     parameters:
- *       - in: path
- *         name: postId
- *         required: true
- *         description: ID of the post to delete.
- *         schema:
- *           type: integer
- *     responses:
- *       204:
- *         description: Post deleted successfully.
- *       404:
- *         description: Post not found.
- *       500:
- *         description: Internal server error.
- */
 app.delete('/posts/:postId', async (req, res) => {
   try {
     const result = await deletePById(req.params.postId)
@@ -201,40 +84,17 @@ app.delete('/posts/:postId', async (req, res) => {
   }
 })
 
-/**
- * @swagger
- * /:
- *   get:
- *     summary: Error handler for undefined endpoints
- *     description: Returns a message for undefined endpoints.
- *     responses:
- *       404:
- *         description: Endpoint not found.
- */
 app.use((_req, res) => {
   res.status(404).send('No se ha encontrado el endpoint')
 })
 
-/**
- * @swagger
- * /:
- *   get:
- *     summary: Error handler for internal server errors
- *     description: Returns a message for internal server errors.
- *     responses:
- *       500:
- *         description: Internal server error.
- */
 app.use((error, _req, res) => {
   const status = error.status || 500
   const message = error.message || 'Error Interno de Servidor'
   res.status(status).json({ error: message })
 })
 
-// Serve Swagger documentation
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs))
-
-const port = 3000
+const port = 5000
 app.listen(port, () => {
   console.log(`Server listening at http://127.0.0.1:${port}`)
 })
