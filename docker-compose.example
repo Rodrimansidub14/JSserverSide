@@ -10,6 +10,9 @@ services:
       - db
     environment:
       DATABASE_URL: mysql://user:12345@db:3306/erblog
+    web:
+      image: nginx
+      restart: always
 
   db:
     image: mysql:5.7
@@ -23,6 +26,6 @@ services:
       MYSQL_PASSWORD: 12345
     ports:
       - "3306:3306"
-
+    restart: always
 volumes:
   db_data:
